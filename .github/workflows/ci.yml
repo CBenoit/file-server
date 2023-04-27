@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+  workflow_dispatch:
+
+jobs:
+  tests:
+      name: Tests [${{ matrix.os }} ${{ matrix.arch }}]
+      runs-on: ${{ matrix.runner }}
+      strategy:
+        matrix:
+          arch: [ x86_64 ]
+          os: [ windows, linux ]
+          include:
+            - os: windows
+              runner: windows-latest
+            - os: linux
+              runner: ubuntu-latest
+
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: Tests
+          run: cargo test --workspace
+
+  lints:
+      name: Lints
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: Clippy
+          run: cargo clippy --workspace
+
