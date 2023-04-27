@@ -27,7 +27,7 @@ jobs:
           uses: actions/checkout@v3
 
         - name: Tests
-          run: cargo test --workspace
+          run: cargo test --workspace --locked
 
   lints:
       name: Lints
@@ -38,5 +38,5 @@ jobs:
           uses: actions/checkout@v3
 
         - name: Clippy
-          run: cargo clippy --workspace
+          run: cargo clippy --workspace --locked -- -D warnings
 
