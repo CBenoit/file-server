@@ -6,6 +6,7 @@ use axum::http::StatusCode;
 use axum::routing::get;
 use axum::Router;
 use std::net::SocketAddr;
+use tokio::net::TcpListener;
 use tower_http::services::ServeDir;
 use tracing_subscriber::layer::SubscriberExt as _;
 use tracing_subscriber::util::SubscriberInitExt as _;
@@ -31,12 +32,11 @@ async fn main() {
         .route("/", get(index))
         .fallback_service(serve_dir);
 
-    let server = axum::Server::bind(&addr);
+    let listener = TcpListener::bind(&addr).await.expect("bind tcp listener");
 
     info!("Listening on {addr}");
 
-    server
-        .serve(app.into_make_service())
+    axum::serve(listener, app.into_make_service())
         .await
         .expect("server error");
 }
